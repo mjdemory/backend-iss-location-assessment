@@ -15,6 +15,7 @@ def astro_info():
 
 def location():
     response = requests.get('http://api.open-notify.org/iss-now.json')
+    response.raise_for_status()
     location = response.json()["iss_position"]
     Lat = float(location["latitude"])
     Long = float(location["longitude"])
@@ -35,14 +36,52 @@ def iss_map(Lat, Long):
 
     iss = turtle.Turtle()
     iss.shape("iss.gif")
-    # iss.color('yellow')
     iss.setheading(90)
     iss.penup()
     iss.goto(Long, Lat)
+    return screen
+    # screen.exitonclick()
     
     
 
-    # Location of Indianapolis, IN
+# def overhead(long_indy, lat_indy):
+
+    
+#     parameters = {"lat": lat_indy, "long": long_indy}
+
+#     response = requests.get("http://api.open-notify.org/iss-pass.json", params=parameters)
+
+#     data = response.json
+
+#     over_indy = data['response'][1]['risetime']
+
+#     # return time.ctime(over_indy)
+#     style = ('Arial',6,'bold')
+#     # time.ctime(data['request']['risetime'])
+
+#     return location_indy.write(time.ctime(over_indy),font=style)
+
+
+def main():
+    names = ''
+    astro_dict = astro_info()
+    for people in astro_dict:
+        names += people['name'] + ', '
+
+    print('Their names are: ' + names[:-2] + ' and they are on '+ str(people['craft']) + '.')
+
+    print("The current number of astronauts is {}.".format(len(astro_dict)))
+
+    Lat, Long = location()
+
+    print("Latitude: ", Lat)
+    print("Longitude: ", Long)
+
+    screen = None
+    
+    screen = iss_map(Lat, Long)
+
+
     lat_indy = float(39.768452)
     long_indy = float(-86.156212)
 
@@ -52,51 +91,13 @@ def iss_map(Lat, Long):
     location_indy.goto(long_indy, lat_indy)
     location_indy.dot(5)
     location_indy.hideturtle()
-    screen.exitonclick()
-    return screen
+    # indy_pass = overhead(lat_indy, long_indy)
+    # location_indy.write(indy_pass, font=style)
 
-def overhead():
-
-    location_indy = turtle.Turtle()
-
-    parameters = {"lat": 39.768452, "long": -86.156212}
-
-    response = requests.get("http://api.open-notify.org/iss-pass.json", params=parameters)
-
-    data = response.json
-
-    over_indy = data['response'][1]['risetime']
-
-
-
-    # time.ctime(data['request']['risetime'])
-
-    style = ('Arial',6,'bold')
-
-    return location_indy.write(time.ctime(over_indy),font=style)
-
-
-def main():
-    names = ''
-    astro_dict = astro_info()
-    for people in astro_dict:
-        names += people['name'] + ', '
-
-    print('Their names are: ' + names[:-2] + '.')
-
-    print("The current number of astronauts is {}.".format(len(astro_dict)))
-
-    Lat, Long = location()
-
-    print("Latitude: ", Lat)
-    print("Longitude: ", Long)
-
-    iss_map(Lat, Long)
-
-    overhead()
-
-    
-    
+    if screen is not None:
+        print('Click on screen to exit...')
+        screen.exitonclick()
+        # style = ('Arial',6,'bold')
 
 
 
